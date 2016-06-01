@@ -14,7 +14,11 @@ return [
     'components' => [
         'user' => [
             'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false, // disable all cookie based authentication
+        ],
+        'session' => [
+            'name' => 'PHPFRONTSESSID',
+            'savePath' => __DIR__ . '/../runtime/tmp',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -28,14 +32,12 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

@@ -15,6 +15,12 @@ class Globals extends Component
     CONST SENDER_ID 	= 'PROZOO';
     public static $SMS_URL = 'http://www.smsjust.com/blank/sms/user/urlsms.php';
 
+    /**
+     * Send SMS
+     * @param $message
+     * @param $recipient
+     * @throws CHttpException
+     */
     public static function sendSMS($message, $recipient) {
         // Check for client's internet connectivity
         if(connection_aborted() == 1) {
@@ -36,6 +42,38 @@ class Globals extends Component
         }
     }
 
+    /**
+     * Send Mail
+     * @param $template
+     * @param $data
+     * @param $from
+     * @param $to
+     * @param $subject
+     * @param array $cc
+     * @return bool
+     */
+    public static function sendMail($template, $data, $from, $to, $subject, $cc=[])
+    {
+        $mail = \Yii::$app->mailer->compose(['html' => $template], $data)
+            ->setFrom($from)
+            ->setTo($to)
+            ->setCc($cc)
+            ->setSubject($subject)
+            ->send();
+        return $mail;
+    }
+
+    /**
+     * Send Mail with attachment
+     * @param $template
+     * @param $data
+     * @param $from
+     * @param $to
+     * @param $subject
+     * @param $attachFilePath
+     * @param array $cc
+     * @return bool
+     */
     public static function sendMailWithAttachment($template, $data, $from, $to, $subject, $attachFilePath, $cc=[])
     {
         $message = Yii::$app->mailer->compose(['html' => $template], $data);
