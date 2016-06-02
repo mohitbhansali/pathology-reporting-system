@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Patient;
 use common\models\TestsType;
 use Yii;
 use common\models\Reports;
@@ -12,6 +13,9 @@ use yii\filters\VerbFilter;
 use common\models\User;
 use common\models\PatientTests;
 use common\models\PatientTestsSearch;
+use mPDF;
+use common\components\Globals;
+use yii\helpers\Url;
 
 /**
  * ReportsController implements the CRUD actions for Reports model.
@@ -40,6 +44,19 @@ class ReportsController extends Controller
     public function actionIndex()
     {
         $searchModel = new ReportsSearch();
+        if(Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypeOperator']) {
+            $searchModel->created_by = Yii::$app->user->identity->id;
+        } else {
+            $patient = Patient::find()
+                            ->select('id')
+                            ->where(['user_fk_id' => Yii::$app->user->identity->id])
+                            ->one();
+            if($patient) {
+                $searchModel->patient_fk_id = $patient->id;
+            } else {
+                $searchModel->patient_fk_id = Yii::$app->params['user.userTypeSystem'];
+            }
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -132,43 +149,80 @@ class ReportsController extends Controller
      */
     public function actionDownloadReport($id)
     {
-        $report = Reports::findOne($id);
+        $model = Reports::findOne($id);
 
-        $file_folder = 'uploads/order-invoice/';
+        $file_folder = 'uploads/reports/';
         $fileNameWithoutExt = 'pathologylabs_report_'.$model->id.time();
         $filename = $fileNameWithoutExt.'.pdf';
         $file_path = $file_folder.$filename;
 
-        $orderInvoice = new OrderInvoice();
-        $orderInvoice->order_fk_id = $model->id;
-        // Check if proforma or real invoice
-        if(isset($_POST['proforma_invoice'])) {
-            $orderInvoice->is_proforma = '1';
-        } else {
-            $orderInvoice->is_proforma = '0';
-        }
-        $orderInvoice->filename = $filename;
-        $orderInvoice->created_by = Yii::$app->user->identity->id;
-        $orderInvoice->save();
+        //checking for invoice directory exists or not
+        if(!is_dir($file_folder))
+            mkdir($file_folder, 0755,true);
 
-        $mPDF1=new mPDF();
+        $mPDF1 = new mPDF();
         $mPDF1->setAutoTopMargin = 'stretch';
-        //$mPDF1->setAutoBottomMargin = 'pad';
-        $mPDF1->SetHeader($this->renderPartial('_order_invoice_header', array(
-            'invoiceType' => $orderInvoice->is_proforma,
-            'invoicename' => 'BOD'.$orderInvoice->order_fk_id,
-            'order'=> $model,
+        $mPDF1->SetHeader($this->renderPartial('_report_header', array(
+            'model' => $model,
         )));
         $mPDF1->SetFooter('{PAGENO}');
-        $mPDF1->WriteHTML($this->renderPartial('_order_invoice', array(
-            'order'=> $model,
-            'orderProduct' => $orderProduct,
-            'invoicename' => 'BOD'.$orderInvoice->order_fk_id,
-            'invoiceType' => $orderInvoice->is_proforma
-        ), true));
+        $mPDF1->WriteHTML($this->renderPartial('_report', array(
+            'model'=> $model,
+        )));
 
-        //saving the file on file server
-        $mPDF1->Output($file_path, 'F');
+        //download pdf
+        $mPDF1->Output($filename, 'D');
+    }
+
+    /**
+     * @param $id
+     * Download Report as PDF
+     */
+    public function actionMailReport()
+    {
+        if(isset($_GET['id'])) {
+            $id = $_GET['id'];
+
+            $model = Reports::findOne($id);
+
+            $file_folder = 'uploads/reports/';
+            $fileNameWithoutExt = 'pathologylabs_report_'.$model->id.time();
+            $filename = $fileNameWithoutExt.'.pdf';
+            $file_path = $file_folder.$filename;
+
+            //checking for invoice directory exists or not
+            if(!is_dir($file_folder))
+                mkdir($file_folder, 0755,true);
+
+            $mPDF1 = new mPDF();
+            $mPDF1->setAutoTopMargin = 'stretch';
+            $mPDF1->SetHeader($this->renderPartial('_report_header', array(
+                'model' => $model,
+            )));
+            $mPDF1->SetFooter('{PAGENO}');
+            $mPDF1->WriteHTML($this->renderPartial('_report', array(
+                'model'=> $model,
+            )));
+
+            //download pdf
+            $mPDF1->Output($file_path, 'F');
+
+            $data = ['model' => $model];
+            $subject = "Pathology Lab Report";
+            $from = 'mohit.bhansali@housesome.com';
+            //$toCS = Yii::$app->params['adminEmail'];
+            $to = Yii::$app->params['adminEmail'];
+            $template = "report";
+
+            if(file_exists($file_path)) {
+                Globals::sendMailWithAttachment($template, $data, $from, $to, $subject, $file_path, []);
+            }
+
+            echo json_encode([
+                'status' => 'success'
+            ]);
+            Yii::$app->end();
+        }
     }
 
     /**

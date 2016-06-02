@@ -12,6 +12,7 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use common\models\User;
 
 /**
  * Site controller
@@ -72,7 +73,20 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new LoginForm();
+
+        // Get users for autocomplete
+        $users = User::find()
+            ->select(['name as value', 'email as email'])
+            ->where(['status'=>1,'is_deleted'=>0])
+            ->andWhere(['user_type' => 3])
+            ->asArray()
+            ->all();
+
+        return $this->render('index', [
+            'users' => $users,
+            'model' => $model
+        ]);
     }
 
     /**

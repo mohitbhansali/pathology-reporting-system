@@ -109,3 +109,52 @@ a.desc:after {
 .nav > li > form > button:hover {
     text-decoration: none;
 }
+
+.search {
+    position: absolute;
+    top: 259px;
+    left: 50%;
+    margin-left: -411px;
+    background-color: #FFF;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 15px 0 #242424;
+}
+.search .location-icon, .search .form-control, .search .search-icon {
+    float: left;
+}
+.location-icon, .search-icon {
+    height: 52px;
+}
+.location-icon {
+    background: url("../images/code-icon.png") no-repeat scroll 10px 7px transparent;
+    width: 46px;
+    border-left: 1px solid rgb(224, 224, 224);
+}
+.search .form-control.location {
+    border-radius: 0;
+}
+.search .form-control {
+    float: left;
+    height: 52px;
+    width: 300px;
+    border: 0;
+    font-size: 18px;
+    color: #c1c0c0;
+    box-shadow: none;
+    padding-left: 0;
+}
+.search-icon {
+    background: url("../images/search-icon.png") no-repeat scroll 10px 7px transparent;
+    width: 56px;
+}
+.search-button {
+    height: 52px;
+    width: 127px;
+    float: left;
+    background-color: #ee9c0c;
+    color: #303234;
+    font-size: 18px;
+    border: 0;
+    border-radius: 0;
+}

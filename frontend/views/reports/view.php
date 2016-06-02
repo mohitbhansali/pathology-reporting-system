@@ -20,17 +20,27 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row header">
 
-            <div class="col-sm-4">
+            <div class="col-sm-6">
                 <div class="well">
                     <p>Name: <strong><?= isset($model->patient->user)?$model->patient->user->name:"-"; ?></strong></p>
-                    <p>Gender: </p>
-                    <p>Age</p>
-                    <p>Email: lukasz@bootstrapmaster.com</p>
-                    <p>Phone: +48 123 456 789</p>
+                    <p>Gender: <?php if(isset($model->patient)) {
+                            if($model->patient->gender == 'm') {
+                                echo "Male";
+                            } else {
+                                echo "Female";
+                            }
+                        } ?>
+                    </p>
+                    <p>Age: <?php
+                        if(isset($model->patient->dob)) {
+                            echo date_diff(date_create($model->patient->dob), date_create('now'))->y;
+                        }
+                        ?></p>
+                    <p>Email: <?= isset($model->patient->user)?$model->patient->user->email:"-"; ?></p>
                 </div>
             </div><!--/col-->
 
-            <div class="col-sm-4">
+            <div class="col-sm-6">
                 <div class="well">
                     <p>Referred Doctor: <strong><?= $model->referred_doctor;?></strong></p>
                     <p>Konopnickiej 42</p>
@@ -40,15 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div><!--/col-->
 
-            <div class="col-sm-4">
+            <?php if(!empty($model->summary)): ?>
+            <div class="col-md-12 notice">
+                <h3>Summary</h3>
                 <div class="well">
-                    <p>Invoice <strong>#90-98792</strong></p>
-                    <p>March 30, 2013</p>
-                    <p>VAT: PL9877281777</p>
-                    <p>Account Name: BootstrapMaster.com</p>
-                    <p><strong>SWIFT code: 99 8888 7777 6666 5555</strong></p>
+                    <?= $model->summary;?>
                 </div>
             </div><!--/col-->
+            <?php endif; ?>
 
         </div><!--/row-->
         <?php if($dataProvider->getTotalCount() > 0): ?>
@@ -73,20 +82,21 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endif; ?>
         <div class="row">
 
-            <div class="col-lg-4 col-sm-5 notice">
-                <div class="well">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                </div>
-            </div><!--/col-->
-
-            <div class="col-lg-4 col-lg-offset-4 col-sm-5 col-sm-offset-2 recap">
-                <?php if($dataProvider->getTotalCount() > 0) { ?>
-                    <a href="#" class="btn btn-info"><i class="fa fa-print"></i> Download Report</a>
-                    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addMore"><i class="fa fa-usd"></i> Add More Test</a>
-                <?php } else { ?>
-                    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addMore"><i class="fa fa-usd"></i> Add Test in Report</a>
-                <?php } ?>
-            </div><!--/col-->
+            <?php if(Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypeOperator']) { ?>
+                <div class="col-md-12 recap" style="text-align: center">
+                    <?php if($dataProvider->getTotalCount() > 0) { ?>
+                        <a href="<?= Yii::$app->urlManager->createUrl(['reports/download-report', 'id'=>$model->id]); ?>" class="btn btn-info"><i class="fa fa-print"></i> Download Report</a>
+                        <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addMore"><i class="fa fa-usd"></i> Add More Test</a>
+                    <?php } else { ?>
+                        <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addMore"><i class="fa fa-usd"></i> Add Test in Report</a>
+                    <?php } ?>
+                </div><!--/col-->
+            <?php } else { ?>
+                <div class="col-md-12 recap" style="text-align: center">
+                    <a href="<?= Yii::$app->urlManager->createUrl(['reports/download-report', 'id'=>$model->id]); ?>" class="btn btn-info"><i class="fa fa-print"></i> Download Report</a>
+                    <a href="#" class="btn btn-success" id="mail-report"><i class="fa fa-print"></i> Mail Report</a>
+                </div><!--/col-->
+            <?php } ?>
 
         </div><!--/row-->
 
@@ -131,3 +141,28 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script>
+    $('#mail-report').on('click', function(e) {
+        var t = $(this);
+
+        $.ajax({
+            url: "<?= Yii::$app->urlManager->createUrl(['reports/mail-report']); ?>",
+            type: 'GET',
+            data: {id: "<?= $model->id;?>"},
+            async: false,
+            cache: false,
+            success: function(data) {
+                var data = JSON.parse(data);
+                if(data.status == 'success') {
+                    t.prop('disabled',true);
+                }
+            },
+            error: function() {
+                alert("We are facing some issues right now. Please contact admin.");
+            }
+
+        });
+        e.preventDefault();
+    })
+</script>

@@ -14,21 +14,30 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('Create Reports', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php if(Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypeOperator']) { ?>
+        <p>
+            <?= Html::a('Create Reports', ['create'], ['class' => 'btn btn-success']) ?>
+        </p>
+    <?php } ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'patient_fk_id',
             'exam',
+            [
+                'label' => 'Patient',
+                'value' => function ($model) {
+                    if(isset($model->patient->user)) {
+                        return $model->patient->user->name;
+                    } else {
+                        return '-';
+                    }
+                },
+            ],
             'referred_doctor',
-            'prescription_image',
+            //'prescription_image',
             // 'prescrption_text:ntext',
             // 'summary:ntext',
             // 'status',
@@ -38,7 +47,17 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'modified_by',
             // 'modified_date',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'visibleButtons' => [
+                    'update' => function ($model) {
+                        return Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypeOperator'] ? true : false;
+                    },
+                    'delete' => function ($model) {
+                        return Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypeOperator'] ? true : false;
+                    },
+                ]
+            ],
         ],
     ]); ?>
 </div>

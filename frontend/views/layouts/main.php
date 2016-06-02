@@ -42,8 +42,10 @@ AppAsset::register($this);
         $menuItems[] = ['label' => 'Register as Operator', 'url' => ['/site/signup']];
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
-        $menuItems[] = ['label' => 'Patients', 'url' => ['/patient/index']];
-        $menuItems[] = ['label' => 'Report', 'url' => ['/report/index']];
+        if(Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypeOperator']) {
+            $menuItems[] = ['label' => 'Patients', 'url' => ['/patient/index']];
+        }
+        $menuItems[] = ['label' => 'Report', 'url' => ['/reports/index']];
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(

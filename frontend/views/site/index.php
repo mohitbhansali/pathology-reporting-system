@@ -1,53 +1,56 @@
 <?php
 
+use yii\jui\AutoComplete;
+use yii\web\JsExpression;
+use yii\bootstrap\ActiveForm;
+
 /* @var $this yii\web\View */
 
 $this->title = 'Pathology Lab Reporting System';
 ?>
 <div class="site-index">
 
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
+    <section class="block">
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+        <?php if(Yii::$app->user->isGuest): ?>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
-    </div>
+            <?php $form = ActiveForm::begin([
+                'id' => 'login-form',
+                'action' => ['login'],
+                'fieldConfig' => [
+                    'template' => "{input}",
+                    'options' => [
+                        'tag'=>'span'
+                    ]
+                ]
+            ]); ?>
+            <?php echo $form->errorSummary($model); ?>
+                <div class="search">
+                    <div class="search-icon"></div>
+                    <?= AutoComplete::widget([
+                        'attribute' => "patient",
+                        'id' => "patient",
+                        'clientOptions' => [
+                            'source' => $users,
+                            'autoFill' => true,
+                            'minLength' => '1',
+                            'select' => new JsExpression("function(event, ui) {
+                                console.log(ui.item.id);
+                                    $('#loginform-email').val(ui.item.email);
+                                }")
+                        ],
+                        'options' => [
+                            'placeholder' => 'Enter Patient Name..',
+                            'class' => 'form-control',
+                        ],
+                    ]);
+                    ?>
+                    <?= $form->field($model, 'email')->hiddenInput()->label(false) ?>
+                    <div class="location-icon"></div>
+                    <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Enter Pass Code', 'class' => 'form-control location'])->label(false) ?>
+                    <input value="SEARCH" class="search-button btn btn-primary" type="submit">
+                </div>
+            <?php ActiveForm::end(); ?>
+        <?php endif; ?>
+    </section>
 </div>

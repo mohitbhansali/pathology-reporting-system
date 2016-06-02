@@ -12,9 +12,6 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
-        'Globals' => [
-            'class' => 'common\components\Globals'
-        ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             'viewPath' => '@common/mail',
@@ -25,11 +22,14 @@ return [
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host' => "email-smtp.us-east-1.amazonaws.com",
-                'username' => "AKIAIWX5CNQZEIK5OLSA",
-                'password' => "Avkt/uNi1/Xkur/J46bvsd3MYiFVA4kBN3pmGrDQci56",
+                'username' => "AKIAJE5KXHKROVZ3MNXA",
+                'password' => "ApcqJmhvrXIlw2q0czzqZxky4lU6VY3G2oCEh+p2qbsv",
                 'port' => "587",
                 'encryption' => "tls",
-            ]
+            ],
+        ],
+        'Globals' => [
+            'class' => 'common\components\Globals'
         ],
     ],
     'modules' => [
