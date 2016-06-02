@@ -3,9 +3,9 @@ namespace common\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use yii\db\Expression;
 
 /**
  * User model
@@ -41,22 +41,53 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @inheritdoc
      */
-    public function behaviors()
+    public function rules()
     {
         return [
-            TimestampBehavior::className(),
+            ['name', 'filter', 'filter' => 'trim'],
+            ['name', 'required'],
+            ['name', 'string', 'min' => 2, 'max' => 255],
+
+            ['email', 'filter', 'filter' => 'trim'],
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['created_date', 'modified_date'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function behaviors()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            'timestamp' => [
+                'class' => 'yii\behaviors\TimestampBehavior',
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_date', 'modified_date'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['modified_date'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
         ];
+    }
+
+    /**
+     * @return before save rules for model attributes.
+     */
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord) {
+            $this->created_by = isset(Yii::$app->user->identity->id)?Yii::$app->user->identity->id:Yii::$app->params['user.userTypeSystem'];
+        } else {
+            $this->modified_by = Yii::$app->user->identity->id;
+        }
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -188,5 +219,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPatient()
+    {
+        return $this->hasOne(Patient::className(), ['user_fk_id' => 'id']);
     }
 }
