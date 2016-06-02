@@ -73,6 +73,7 @@ class ReportsController extends Controller
     public function actionView($id)
     {
         $searchModel = new PatientTestsSearch();
+        $searchModel->patient_report_fk_id = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Add New Test
