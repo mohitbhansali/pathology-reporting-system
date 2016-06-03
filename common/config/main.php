@@ -21,9 +21,9 @@ return [
             'useFileTransport' => false,
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
-                'host' => "email-smtp.us-east-1.amazonaws.com",
-                'username' => "AKIAJE5KXHKROVZ3MNXA",
-                'password' => "ApcqJmhvrXIlw2q0czzqZxky4lU6VY3G2oCEh+p2qbsv",
+                'host' => "smtp.zoho.com",
+                'username' => "mohit.bhansali@housesome.com",
+                'password' => "mohit@123",
                 'port' => "587",
                 'encryption' => "tls",
             ],
