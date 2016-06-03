@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-md-12 notice">
                 <h3>Summary</h3>
                 <div class="well">
-                    <?= $model->summary;?>
+                    <?= nl2br($model->summary)  ;?>
                 </div>
             </div><!--/col-->
             <?php endif; ?>

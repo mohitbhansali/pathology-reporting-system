@@ -19,7 +19,7 @@ return [
         ],
         'session' => [
             'name' => 'PHPBACKSESSID',
-            'savePath' => __DIR__ . '/../runtime/tmp',
+            'savePath' => __DIR__ . '/../tmp',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
