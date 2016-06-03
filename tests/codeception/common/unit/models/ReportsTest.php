@@ -11,7 +11,7 @@ use tests\codeception\common\fixtures\UserFixture;
 use tests\codeception\common\fixtures\PatientFixture;
 
 /**
- * Patient test
+ * Reports test
  */
 class ReportsTest extends DbTestCase
 {
@@ -45,7 +45,7 @@ class ReportsTest extends DbTestCase
         $this->assertInstanceOf('common\models\Reports',$model,'report should be created');
 
         expect('name should be correct', $model->exam)->equals('some_exam');
-        expect('email should be correct', $model->referred_doctor)->equals('some_doctor_name');
+        expect('referred doctor name should be correct', $model->referred_doctor)->equals('some_doctor_name');
     }
 
     public function testNotCorrectAddReport()

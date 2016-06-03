@@ -2,6 +2,10 @@
 
 namespace tests\codeception\common\unit\models;
 
+use common\models\PatientTests;
+use common\models\TestsType;
+use tests\codeception\common\fixtures\ReportsFixture;
+use tests\codeception\common\fixtures\TestsTypeFixture;
 use Yii;
 use tests\codeception\common\unit\DbTestCase;
 use Codeception\Specify;
@@ -13,7 +17,7 @@ use tests\codeception\common\fixtures\PatientFixture;
 /**
  * Patient test
  */
-class ReportsTest extends DbTestCase
+class PatientTestsTest extends DbTestCase
 {
     use Specify;
 
@@ -31,41 +35,40 @@ class ReportsTest extends DbTestCase
         ]);
     }
 
-    public function testCorrectCreateReport()
+    public function testCorrectPatientTest()
     {
-        $patient = Patient::find()->select('id')->orderBy('id')->one();
-        $model = new Reports([
-            'patient_fk_id' => $patient->id,
-            'exam' => 'some_exam',
-            'referred_doctor' => 'some_doctor_name',
-            'prescrption_text' => 'details_of_test',
+        $report = Reports::find()->select('id')->orderBy('id')->one();
+        $testType = TestsType::find()->select('id')->orderBy('id')->one();
+        $model = new PatientTests([
+            'patient_report_fk_id' => isset($report)?$report->id:0,
+            'tests_type_fk_id' => isset($testType)?$testType->id:0,
+            'test_result' => '100 ml',
         ]);
-        $model->createReport();
+        $model->createPatientTests();
 
-        $this->assertInstanceOf('common\models\Reports',$model,'report should be created');
+        $this->assertInstanceOf('common\models\PatientTests',$model,'patient tests should be created');
 
-        expect('name should be correct', $model->exam)->equals('some_exam');
-        expect('email should be correct', $model->referred_doctor)->equals('some_doctor_name');
+        expect('test result should be correct', $model->test_result)->equals('100 ml');
     }
 
-    public function testNotCorrectAddReport()
+    public function testNotCorrectPatientTest()
     {
-        $model = new Reports([
-            'exam' => '',
-            'referred_doctor' => 'some_doctor_name',
-            'prescrption_text' => 'details_of_test',
+        $model = new PatientTests([
+            'patient_report_fk_id' => '',
+            'tests_type_fk_id' => '',
+            'test_result' => '100 ml',
         ]);
 
-        expect('exam is empty, reports should not be created', $model->createReport())->null();
+        expect('report id is empty, patient tests should not be created', $model->createPatientTests())->null();
     }
 
     public function fixtures()
     {
         return [
-            /*'user' => [
-                'class' => UserFixture::className(),
-                'dataFile' => '@tests/codeception/common/fixtures/data/init_login.php',
-            ],*/
+            'testsType' => [
+                'class' => TestsTypeFixture::className(),
+                'dataFile' => '@tests/codeception/common/unit/fixtures/data/models/testsType.php',
+            ],
             'patientUser' => [
                 'class' => UserFixture::className(),
                 'dataFile' => '@tests/codeception/common/unit/fixtures/data/models/patientUser.php',
@@ -73,6 +76,10 @@ class ReportsTest extends DbTestCase
             'patient' => [
                 'class' => PatientFixture::className(),
                 'dataFile' => '@tests/codeception/common/unit/fixtures/data/models/patient.php',
+            ],
+            'reports' => [
+                'class' => ReportsFixture::className(),
+                'dataFile' => '@tests/codeception/common/unit/fixtures/data/models/reports.php',
             ],
         ];
     }

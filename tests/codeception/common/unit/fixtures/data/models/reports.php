@@ -1,7 +1,8 @@
 <?php
-
+$patient = \common\models\Patient::find()->select('patient_details.id')->joinWith('user')->where(['user.user_type' => 3])->orderBy('patient_details.id')->one();
 return [
     [
+        'patient_fk_id' => isset($patient)?$patient->id:0,
         'exam' => 'Lab Exam Name',
         'referred_doctor' => 'Dr Subramaniam',
         'prescrption_text' => 'Description for tests',

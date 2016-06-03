@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use Codeception\Lib\Generator\Test;
 use Yii;
 
 /**
@@ -50,5 +51,17 @@ class TestsType extends \yii\db\ActiveRecord
             'testing_frequency' => 'Testing Frequency',
             'comments' => 'Comments',
         ];
+    }
+
+    public function createTestsType()
+    {
+        if(!$this->validate()) {
+            return null;
+        }
+
+        $model = new TestsType();
+        $model->name = $this->name;
+        $model->reference_interval = $this->reference_interval;
+        return $model->save() ? $model : null;
     }
 }

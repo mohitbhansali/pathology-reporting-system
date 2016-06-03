@@ -70,7 +70,7 @@ class PatientTests extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($this->isNewRecord) {
-            $this->created_by = isset(Yii::$app->user->identity->id)?Yii::$app->user->identity->id:Yii::$app->params['user.userTypeSystem'];
+            $this->created_by = isset(Yii::$app->user->identity->id)?Yii::$app->user->identity->id:0;
         } else {
             $this->modified_by = Yii::$app->user->identity->id;
         }
@@ -109,5 +109,19 @@ class PatientTests extends \yii\db\ActiveRecord
     public function getPatientReport()
     {
         return $this->hasOne(PatientReports::className(), ['id' => 'patient_report_fk_id']);
+    }
+
+    public function createPatientTests()
+    {
+        if(!$this->validate()) {
+            return null;
+        }
+
+        $model = new PatientTests();
+        $model->patient_report_fk_id = $this->patient_report_fk_id;
+        $model->tests_type_fk_id = $this->tests_type_fk_id;
+        $model->test_result = $this->test_result;
+
+        return $model->save() ? $model : null;
     }
 }
