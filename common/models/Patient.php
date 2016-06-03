@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use common\components\Globals;
 
 /**
  * This is the model class for table "patient_details".
@@ -116,18 +117,10 @@ class Patient extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param $user
      * @return Patient|null
      */
-    public function addPatient($user)
+    public function addPatient()
     {
-        /*$userModel = new User();
-        $userModel->email = $user->email;
-        $userModel->name = $user->name;
-        $userModel->setPassword($this->pass_code);
-        $userModel->generateAuthKey();
-        $userModel->user_type = $user->user_type;*/
-
         if (!$this->validate()) {
             return null;
         }
@@ -138,7 +131,18 @@ class Patient extends \yii\db\ActiveRecord
         $model->dob = $this->dob;
         $model->gender = $this->gender;
 
-        return $model->save() ? $model : null;
+        if($model->save()) {
+            if(isset($model->user->email)) {
+                $data = ['model' => $model];
+                $subject = "Pathology Labs Passcode";
+                $from = 'mohit.bhansali@housesome.com';
+                $to = $model->user->email;
+                $template = "passcode";
+
+                Globals::sendMail($template, $data, $from,$to ,$subject, []);
+            }
+            return $model;
+        }
 
         return null;
     }

@@ -74,7 +74,7 @@ class PatientController extends Controller
             $user->user_type = Yii::$app->params['user.userTypePatient'];
             if($user->save()) {
                 $model->user_fk_id = $user->id;
-                if($model->save()) {
+                if($model->addPatient()) {
                     return $this->redirect(['view', 'id' => $model->id]);
                 }
             }

@@ -15,7 +15,6 @@ use common\models\PatientTests;
 use common\models\PatientTestsSearch;
 use mPDF;
 use common\components\Globals;
-use yii\helpers\Url;
 
 /**
  * ReportsController implements the CRUD actions for Reports model.

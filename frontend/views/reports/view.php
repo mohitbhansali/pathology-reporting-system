@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php } else { ?>
                 <div class="col-md-12 recap" style="text-align: center">
                     <a href="<?= Yii::$app->urlManager->createUrl(['reports/download-report', 'id'=>$model->id]); ?>" class="btn btn-info"><i class="fa fa-print"></i> Download Report</a>
-                    <a href="#" class="btn btn-success" id="mail-report"><i class="fa fa-print"></i> Mail Report</a>
+                    <a href="#" class="btn btn-success" id="mail-report"> Mail Report</a>
                 </div><!--/col-->
             <?php } ?>
 
@@ -145,6 +145,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <script>
     $('#mail-report').on('click', function(e) {
         var t = $(this);
+        t.prop('disabled',true);
+        t.text('Sending Mail...');
 
         $.ajax({
             url: "<?= Yii::$app->urlManager->createUrl(['reports/mail-report']); ?>",
@@ -153,10 +155,8 @@ $this->params['breadcrumbs'][] = $this->title;
             async: false,
             cache: false,
             success: function(data) {
-                var data = JSON.parse(data);
-                if(data.status == 'success') {
-                    t.prop('disabled',true);
-                }
+                t.prop('disabled',false);
+                t.text('Mail Sent');
             },
             error: function() {
                 alert("We are facing some issues right now. Please contact admin.");

@@ -7,9 +7,9 @@
 <body>
 <!-- Wrapper/Container Table: Use a wrapper table to control the width and the background color consistently of your email. Use this approach instead of setting attributes on the body tag. -->
 <div>
-    Dear <?= isset($model->patient->user)?$model->patient->user->name:''; ?> <br><br/>
+    Dear <?= isset($model->user)?$model->user->name:''; ?> <br><br/>
 
-    <p>Please find the attached lab report.</p>
+    <p>Please use the following pass-code to view your report: </p>
 </div>
 <!-- End of wrapper table -->
 </body>

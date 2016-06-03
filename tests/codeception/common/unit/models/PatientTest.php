@@ -32,11 +32,6 @@ class PatientTest extends DbTestCase
 
     public function testCorrectAddPatient()
     {
-        /*$user = new User([
-            'name' => 'some_name',
-            'email' => 'some_email@example.com',
-            'user_type' => '3',
-        ]);*/
         $user = User::find()->where(['user_type' => 3])->orderBy('id')->one();
         $model = new Patient([
             'user_fk_id' => $user->id,
@@ -45,7 +40,7 @@ class PatientTest extends DbTestCase
             'dob' => '1991-02-11',
         ]);
 
-        $model->addPatient($user);
+        $model->addPatient();
 
         $this->assertInstanceOf('common\models\Patient',$model,'patient should be valid');
 
@@ -56,18 +51,13 @@ class PatientTest extends DbTestCase
 
     public function testNotCorrectAddPatient()
     {
-        $user = new User([
-            'name' => 'troy.becker',
-            'email' => 'nicolas.dianna@hotmail.com',
-            'user_type' => '3',
-        ]);
         $model = new Patient([
-            'pass_code' => mt_rand(100000, 999999),
+            'pass_code' => '',
             'gender' => 'm',
             'dob' => '1991-02-11',
         ]);
 
-        expect('email is in use, patient should not be created', $model->addPatient($user))->null();
+        expect('pass code is empty, patient should not be created', $model->addPatient())->null();
     }
 
     public function fixtures()
