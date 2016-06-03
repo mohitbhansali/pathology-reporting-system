@@ -78,7 +78,7 @@ class Patient extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($this->isNewRecord) {
-            $this->created_by = isset(Yii::$app->user->identity->id)?Yii::$app->user->identity->id:Yii::$app->params['user.userTypeSystem'];
+            $this->created_by = isset(Yii::$app->user->identity->id)?Yii::$app->user->identity->id:'0';
         } else {
             $this->modified_by = Yii::$app->user->identity->id;
         }
@@ -113,5 +113,33 @@ class Patient extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_fk_id']);
+    }
+
+    /**
+     * @param $user
+     * @return Patient|null
+     */
+    public function addPatient($user)
+    {
+        /*$userModel = new User();
+        $userModel->email = $user->email;
+        $userModel->name = $user->name;
+        $userModel->setPassword($this->pass_code);
+        $userModel->generateAuthKey();
+        $userModel->user_type = $user->user_type;*/
+
+        if (!$this->validate()) {
+            return null;
+        }
+
+        $model = new Patient();
+
+        $model->user_fk_id = $this->user_fk_id;
+        $model->dob = $this->dob;
+        $model->gender = $this->gender;
+
+        return $model->save() ? $model : null;
+
+        return null;
     }
 }

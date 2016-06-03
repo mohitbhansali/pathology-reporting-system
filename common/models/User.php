@@ -83,7 +83,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
         if ($this->isNewRecord) {
-            $this->created_by = isset(Yii::$app->user->identity->id)?Yii::$app->user->identity->id:Yii::$app->params['user.userTypeSystem'];
+            $this->created_by = isset(Yii::$app->user->identity->id)?Yii::$app->user->identity->id:'0';
         } else {
             $this->modified_by = Yii::$app->user->identity->id;
         }

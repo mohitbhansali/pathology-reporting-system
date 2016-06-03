@@ -118,4 +118,15 @@ class Reports extends \yii\db\ActiveRecord
     {
         return $this->hasMany(PatientTests::className(), ['patient_report_fk_id' => 'id']);
     }
+
+    public function createReport()
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        $model = new Reports();
+        $model->patient_fk_id = $this->patient_fk_id;
+        return $model->save() ? $model : null;
+    }
 }

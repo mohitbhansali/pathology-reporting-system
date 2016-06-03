@@ -13,12 +13,12 @@ class LoginPage extends BasePage
     public $route = 'site/login';
 
     /**
-     * @param string $username
+     * @param string $email
      * @param string $password
      */
-    public function login($username, $password)
+    public function login($email, $password)
     {
-        $this->actor->fillField('input[name="LoginForm[username]"]', $username);
+        $this->actor->fillField('input[name="LoginForm[email]"]', $email);
         $this->actor->fillField('input[name="LoginForm[password]"]', $password);
         $this->actor->click('login-button');
     }
