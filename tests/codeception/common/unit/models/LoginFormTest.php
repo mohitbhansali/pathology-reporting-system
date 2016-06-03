@@ -65,10 +65,10 @@ class LoginFormTest extends DbTestCase
         });
     }
 
-    /*public function testLoginCorrect()
+    public function testLoginCorrect()
     {
         $model = new LoginForm([
-            'email' => 'nicole.paucek@schultz.info',
+            'email' => 'operator@pathologylabs.com',
             'password' => 'password_0',
         ]);
 
@@ -77,7 +77,7 @@ class LoginFormTest extends DbTestCase
             expect('error message should not be set', $model->errors)->hasntKey('password');
             expect('user should be logged in', Yii::$app->user->isGuest)->false();
         });
-    }*/
+    }
 
     /**
      * @inheritdoc

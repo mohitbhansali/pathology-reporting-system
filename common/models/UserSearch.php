@@ -59,15 +59,16 @@ class UserSearch extends User
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
             'user_type' => $this->user_type,
             'status' => $this->status,
-            'is_deleted' => $this->is_deleted,
+            'is_deleted' => 0,
             'created_by' => $this->created_by,
             'created_date' => $this->created_date,
             'modified_by' => $this->modified_by,
             'modified_date' => $this->modified_date,
         ]);
+
+        $query->andFilterWhere(['NOT IN','id',['1']]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'auth_key', $this->auth_key])

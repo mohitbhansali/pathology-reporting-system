@@ -9,6 +9,8 @@ use common\models\PatientSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use common\components\AccessRule;
 
 /**
  * PatientController implements the CRUD actions for Patient model.
@@ -25,6 +27,22 @@ class PatientController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['create', 'update', 'delete', 'index', 'view'],
+                        'allow' => true,
+                        'roles' => [
+                            Yii::$app->params['user.userTypeOperator'],
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -71,18 +89,18 @@ class PatientController extends Controller
             $user->setPassword($model->pass_code);
             $user->generateAuthKey();
             $user->user_type = Yii::$app->params['user.userTypePatient'];
-            if($user->save()) {
+            if($user->validate() && $model->validate()) {
+                $user->save();
                 $model->user_fk_id = $user->id;
-                if($model->addPatient()) {
+                if($model = $model->addPatient()) {
                     return $this->redirect(['view', 'id' => $model->id]);
                 }
             }
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-                'user' => $user
-            ]);
         }
+        return $this->render('create', [
+            'model' => $model,
+            'user' => $user
+        ]);
     }
 
     /**

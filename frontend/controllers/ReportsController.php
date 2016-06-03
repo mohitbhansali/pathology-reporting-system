@@ -15,6 +15,8 @@ use common\models\PatientTests;
 use common\models\PatientTestsSearch;
 use mPDF;
 use common\components\Globals;
+use yii\filters\AccessControl;
+use common\components\AccessRule;
 
 /**
  * ReportsController implements the CRUD actions for Reports model.
@@ -31,6 +33,30 @@ class ReportsController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => [
+                            Yii::$app->params['user.userTypeOperator'],
+                        ],
+                    ],
+                    [
+                        'actions' => ['index', 'view', 'download-report', 'mail-report'],
+                        'allow' => true,
+                        'roles' => [
+                            Yii::$app->params['user.userTypePatient'],
+                            Yii::$app->params['user.userTypeOperator'],
+                        ],
+                    ],
                 ],
             ],
         ];

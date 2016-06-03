@@ -9,7 +9,7 @@ return [
         'password_reset_token' => 'ExzkCOaYc1L8IOBs4wdTGGbgNiG3Wz1I_1402312317',
         'created_date' => date("Y-m-d H:i:s"),
         'modified_date' => date("Y-m-d H:i:s"),
-        'email' => 'patientfixture@pathologylabs.com',
+        'email' => 'operator@pathologylabs.com',
         'user_type' => '2'
     ],
 ];

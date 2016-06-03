@@ -32,7 +32,7 @@
             </p>
         </td>
         <td class="tr0 td2">
-            <p class="p2 ft0">Lab No: Y000751881</p>
+            <p class="p2 ft0">Lab No: </p>
         </td>
         <td colspan="2" class="tr0 td13">
             <p class="p2 ft0">

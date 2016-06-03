@@ -63,6 +63,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 'visibleButtons' => [
+                    'mail' => function ($model) {
+                        return Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypePatient'] ? true : false;
+                    },
                     'update' => function ($model) {
                         return Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypeOperator'] ? true : false;
                     },

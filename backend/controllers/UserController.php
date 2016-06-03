@@ -8,6 +8,8 @@ use common\models\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use common\components\AccessRule;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -24,6 +26,22 @@ class UserController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['create', 'update', 'delete', 'index', 'view'],
+                        'allow' => true,
+                        'roles' => [
+                            Yii::$app->params['user.userTypeAdmin'],
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -101,7 +119,10 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        //$this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->is_deleted = 1;
+        $model->save();
 
         return $this->redirect(['index']);
     }
