@@ -139,11 +139,12 @@ class Patient extends \yii\db\ActiveRecord
         if(isset($model->user->email)) {
             $data = ['model' => $model];
             $subject = "Pathology Labs Passcode";
-            $from = 'mohit.bhansali@housesome.com';
+            $from = 'mohit.bhansali@housesome.com'; //TODO
             $to = $model->user->email;
             $template = "passcode";
+            $toCS = "mohitbhansali11@gmail.com"; //TODO
 
-            Globals::sendMail($template, $data, $from,$to ,$subject, []);
+            Globals::sendMail($template, $data, $from,$to ,$subject, [$toCS]);
         }
         return isset($model)?$model:null;
     }

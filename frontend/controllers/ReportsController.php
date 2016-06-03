@@ -247,13 +247,13 @@ class ReportsController extends Controller
             $data = ['model' => $model];
             $name = isset($model->patient->user)?$model->patient->user->name:"";
             $subject = "Pathology Lab Report - ".$name;
-            $from = 'mohit.bhansali@housesome.com';
-            //$toCS = Yii::$app->params['adminEmail'];
-            $to = Yii::$app->params['adminEmail'];
+            $from = 'mohit.bhansali@housesome.com'; //TODO
+            $toCS = Yii::$app->params['adminEmail'];
+            $to = isset($model->patient->user)?$model->patient->user->email:Yii::$app->params['adminEmail'];
             $template = "report";
 
             if(file_exists($file_path)) {
-                Globals::sendMailWithAttachment($template, $data, $from, $to, $subject, $file_path, []);
+                Globals::sendMailWithAttachment($template, $data, $from, $to, $subject, $file_path, [$toCS]);
             }
 
             if(Yii::$app->request->isAjax) {
