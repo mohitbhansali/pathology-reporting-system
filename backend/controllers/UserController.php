@@ -46,6 +46,8 @@ class UserController extends Controller
             ],
         ];
     }
+	
+	public $enableCsrfValidation = false;
 
     /**
      * Lists all User models.
