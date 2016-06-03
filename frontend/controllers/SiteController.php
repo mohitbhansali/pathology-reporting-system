@@ -94,6 +94,36 @@ class SiteController extends Controller
      *
      * @return mixed
      */
+    public function actionPatientLogin()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        } else {
+            // Get users for autocomplete
+            $users = User::find()
+                ->select(['name as value', 'email as email'])
+                ->where(['status'=>1,'is_deleted'=>0])
+                ->andWhere(['user_type' => 3])
+                ->asArray()
+                ->all();
+
+            return $this->render('index', [
+                'model' => $model,
+                'users' => $users
+            ]);
+        }
+    }
+
+    /**
+     * Logs in a user.
+     *
+     * @return mixed
+     */
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {

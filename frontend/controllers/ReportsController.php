@@ -218,10 +218,14 @@ class ReportsController extends Controller
                 Globals::sendMailWithAttachment($template, $data, $from, $to, $subject, $file_path, []);
             }
 
-            echo json_encode([
-                'status' => 'success'
-            ]);
-            Yii::$app->end();
+            if(Yii::$app->request->isAjax) {
+                echo json_encode([
+                    'status' => 'success'
+                ]);
+                Yii::$app->end();
+            } else {
+                return $this->redirect(['index']);
+            }
         }
     }
 

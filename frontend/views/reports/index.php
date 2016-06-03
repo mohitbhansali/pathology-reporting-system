@@ -49,6 +49,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
+                'template' => '{download}{mail}{view}{update}{delete}',
+                'buttons' => [
+                    'download' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-large glyphicon-download"></span>', 'download-report?id='.$model->id, [
+                            'title' => 'Download Report',
+                        ]);
+                    },
+                    'mail' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-envelope"></span>', 'mail-report?id='.$model->id, [
+                            'title' => 'Mail Report',
+                        ]);
+                    }
+                ],
                 'visibleButtons' => [
                     'update' => function ($model) {
                         return Yii::$app->user->identity->user_type == Yii::$app->params['user.userTypeOperator'] ? true : false;

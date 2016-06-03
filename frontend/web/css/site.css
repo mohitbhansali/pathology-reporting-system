@@ -112,7 +112,7 @@ a.desc:after {
 
 .search {
     position: absolute;
-    top: 259px;
+    top: 300px;
     left: 50%;
     margin-left: -411px;
     background-color: #FFF;
@@ -157,4 +157,8 @@ a.desc:after {
     font-size: 18px;
     border: 0;
     border-radius: 0;
+}
+.glyphicon {
+    font-size: 20px;
+    margin-right: 5px;
 }

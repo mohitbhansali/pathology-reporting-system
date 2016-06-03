@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\jui\AutoComplete;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\PatientSearch */
@@ -24,10 +25,36 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'user.name',
+            [
+                'attribute' => 'name',
+                'value' => function ($model) {
+                    if(isset($model->user)) {
+                        return $model->user->name;
+                    } else {
+                        return '-';
+                    }
+                },
+                'filter' => Html::activeTextInput($searchModel, 'name',['class'=>'form-control']),
+            ],
             'pass_code',
-            'gender',
-            'dob',
+            [
+                'attribute' => 'gender',
+                'value' => function ($model) {
+                    if($model->gender == 'm') {
+                        return 'Male';
+                    } else {
+                        return 'Female';
+                    }
+                },
+                'filter' => Html::activeDropDownList($searchModel, 'gender', array("m"=>"Mail", "f"=>"Femail"),['class'=>'form-control','prompt' => 'Select']),
+            ],
+            [
+                'attribute' => 'dob',
+                'value' => function ($model) {
+                    return date_format(date_create($model->dob),'d M Y');
+                },
+                'filter' => Html::activeTextInput($searchModel, 'user_fk_id',['class'=>'form-control']),
+            ],
             // 'height',
             // 'weight',
             // 'blood_group',

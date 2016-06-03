@@ -37,7 +37,6 @@ class PatientController extends Controller
     public function actionIndex()
     {
         $searchModel = new PatientSearch();
-        $searchModel->created_by = Yii::$app->user->identity->id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -113,7 +112,10 @@ class PatientController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $user = User::findOne($model->user_fk_id);
+        $user->is_deleted = 1;
+        $user->update();
 
         return $this->redirect(['index']);
     }

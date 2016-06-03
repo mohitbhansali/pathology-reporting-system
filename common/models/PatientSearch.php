@@ -12,6 +12,7 @@ use common\models\Patient;
  */
 class PatientSearch extends Patient
 {
+    public $name;
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class PatientSearch extends Patient
     {
         return [
             [['id', 'user_fk_id', 'created_by', 'modified_by'], 'integer'],
-            [['pass_code', 'gender', 'height', 'blood_group', 'address', 'created_date', 'modified_date', 'dob'], 'safe'],
+            [['pass_code', 'gender', 'height', 'blood_group', 'address', 'created_date', 'modified_date', 'dob', 'name'], 'safe'],
             [['weight'], 'number'],
         ];
     }
@@ -43,6 +44,7 @@ class PatientSearch extends Patient
     public function search($params)
     {
         $query = Patient::find();
+        $query->joinWith(['user']);
 
         // add conditions that should always apply here
 
@@ -60,21 +62,33 @@ class PatientSearch extends Patient
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'user_fk_id' => $this->user_fk_id,
+            //'id' => $this->id,
+            //'user_fk_id' => $this->user_fk_id,
             'dob' => $this->dob,
             'weight' => $this->weight,
-            'created_by' => $this->created_by,
-            'created_date' => $this->created_date,
-            'modified_by' => $this->modified_by,
-            'modified_date' => $this->modified_date,
+            'patient_details.created_by' => $this->created_by,
+            'patient_details.created_date' => $this->created_date,
+            'patient_details.modified_by' => $this->modified_by,
+            'patient_details.modified_date' => $this->modified_date,
         ]);
+
+        if(isset(Yii::$app->user->identity->user_type) && Yii::$app->user->identity->user_type == '2') {
+            // grid filtering conditions
+            $query->andFilterWhere([
+                'patient_details.created_by' => Yii::$app->user->identity->id,
+            ]);
+        }
 
         $query->andFilterWhere(['like', 'pass_code', $this->pass_code])
             ->andFilterWhere(['like', 'gender', $this->gender])
             ->andFilterWhere(['like', 'height', $this->height])
             ->andFilterWhere(['like', 'blood_group', $this->blood_group])
             ->andFilterWhere(['like', 'address', $this->address]);
+
+        if(isset($this->name) && !empty($this->name)){
+            $query->andFilterWhere(['LIKE', 'user.name', $this->name])->andWhere(['user.is_deleted' => 0]);
+        }
+        $query->andFilterWhere(['user.is_deleted' => 0]);
 
         return $dataProvider;
     }
