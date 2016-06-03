@@ -160,11 +160,21 @@ class ReportsController extends Controller
     {
         $model = $this->findModel($id);
 
+        // Get users for autocomplete
+        $users = User::find()
+            ->select(['user.name as value', 'patient_details.id as name' , 'patient_details.id as id'])
+            ->joinWith('patient')
+            ->where(['user.status'=>1,'user.is_deleted'=>0])
+            ->andWhere(['user.user_type' => 3])
+            ->asArray()
+            ->all();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'users' => $users
             ]);
         }
     }
@@ -201,8 +211,9 @@ class ReportsController extends Controller
     }
 
     /**
-     * @param $id
-     * Download Report as PDF
+     * @return \yii\web\Response
+     * @throws \MpdfException
+     * @throws \yii\base\ExitException
      */
     public function actionMailReport()
     {
@@ -234,7 +245,8 @@ class ReportsController extends Controller
             $mPDF1->Output($file_path, 'F');
 
             $data = ['model' => $model];
-            $subject = "Pathology Lab Report";
+            $name = isset($model->patient->user)?$model->patient->user->name:"";
+            $subject = "Pathology Lab Report - ".$name;
             $from = 'mohit.bhansali@housesome.com';
             //$toCS = Yii::$app->params['adminEmail'];
             $to = Yii::$app->params['adminEmail'];
@@ -263,7 +275,10 @@ class ReportsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        //$this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->is_deleted = 1;
+        $model->save();
 
         return $this->redirect(['index']);
     }

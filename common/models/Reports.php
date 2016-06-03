@@ -13,6 +13,7 @@ use yii\db\Expression;
  * @property integer $patient_fk_id
  * @property string $exam
  * @property string $referred_doctor
+ * @property string $doctor_specialization
  * @property string $prescription_image
  * @property string $prescrption_text
  * @property string $summary
@@ -42,11 +43,11 @@ class Reports extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['patient_fk_id', 'exam', 'referred_doctor'], 'required'],
+            [['patient_fk_id', 'exam', 'referred_doctor', 'doctor_specialization'], 'required'],
             [['patient_fk_id', 'status', 'is_deleted', 'created_by', 'modified_by'], 'integer'],
             [['prescrption_text', 'summary'], 'string'],
             [['created_date', 'modified_date'], 'safe'],
-            [['exam', 'referred_doctor', 'prescription_image'], 'string', 'max' => 255],
+            [['exam', 'referred_doctor', 'doctor_specialization', 'prescription_image'], 'string', 'max' => 255],
             [['patient_fk_id'], 'exist', 'skipOnError' => true, 'targetClass' => Patient::className(), 'targetAttribute' => ['patient_fk_id' => 'id']],
         ];
     }
@@ -91,6 +92,7 @@ class Reports extends \yii\db\ActiveRecord
             'patient_fk_id' => 'Patient',
             'exam' => 'Exam',
             'referred_doctor' => 'Referred Doctor',
+            'doctor_specialization' => 'Doctor Specialization',
             'prescription_image' => 'Prescription Image',
             'prescrption_text' => 'Prescrption Text',
             'summary' => 'Reports Summary',
@@ -127,6 +129,9 @@ class Reports extends \yii\db\ActiveRecord
         return $this->hasMany(PatientTests::className(), ['patient_report_fk_id' => 'id']);
     }
 
+    /**
+     * @return Reports|null
+     */
     public function createReport()
     {
         if (!$this->validate()) {
@@ -136,5 +141,15 @@ class Reports extends \yii\db\ActiveRecord
         $model = new Reports();
         $model->patient_fk_id = $this->patient_fk_id;
         return $model->save() ? $model : null;
+    }
+
+    /**
+    * Sends an email with a report pdf attached.
+    *
+    * @return boolean whether the email was send
+    */
+    public function emailReport()
+    {
+
     }
 }

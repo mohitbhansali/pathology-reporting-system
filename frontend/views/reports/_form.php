@@ -50,6 +50,10 @@ use yii\web\JsExpression;
         </div>
 
         <div class="col-md-12">
+            <?= $form->field($model, 'doctor_specialization')->textInput(['maxlength' => true]) ?>
+        </div>
+
+        <div class="col-md-12">
             <?= $form->field($model, 'prescrption_text')->textarea(['rows' => 6]) ?>
         </div>
 
