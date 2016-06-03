@@ -1,3 +1,4 @@
+<br>
 <table cellspacing="0" cellpadding="0" style="width: 100%">
     <tr>
         <th width="10" align="left">
@@ -27,6 +28,7 @@
         }
     } ?>
 </table>
+<br><br>
 <table cellspacing="0" cellpadding="0" class="t1">
     <tr>
         <td class="tr6 td18">
@@ -42,18 +44,19 @@
             <p class="p3 ft2">&nbsp;</p>
         </td>
     </tr>
+    <br>
     <tr>
         <td class="tr9 td17">
             <p class="p13 ft0">Processed by :-</p>
         </td>
         <td class="tr9 td18">
-            <p class="p14 ft0">Muskuna.S</p>
+            <p class="p14 ft0"><?= isset($model->createdBy)?$model->createdBy->name:'-'; ?></p>
         </td>
         <td class="tr9 td20">
             <p class="p3 ft2">&nbsp;</p>
         </td>
         <td class="tr9 td21">
-            <p class="p15 ft9">Dr. Sweta Shivashanker</p>
+            <p class="p15 ft9"><?= $model->referred_doctor;?></p>
         </td>
     </tr>
     <tr>
@@ -70,21 +73,4 @@
             <p class="p15 ft10">MD (Biochemistry)</p>
         </td>
     </tr>
-    <tr>
-        <td class="tr8 td18">
-            <p class="p3 ft2">&nbsp;</p>
-        </td>
-        <td class="tr8 td19">
-            <p class="p3 ft2">&nbsp;</p>
-        </td>
-        <td class="tr8 td20">
-            <p class="p3 ft2">&nbsp;</p>
-        </td>
-        <td class="tr8 td21">
-            <p class="p16 ft0">Junior
-                <nobr>Consultant-BioChemist</nobr>
-            </p>
-        </td>
-    </tr>
-
 </table>

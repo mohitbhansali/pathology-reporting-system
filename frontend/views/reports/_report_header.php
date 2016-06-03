@@ -9,17 +9,11 @@
         <td class="tr0 td1">
             <p class="p1 ft1"><strong><?= isset($model->patient->user)?$model->patient->user->name:"-"; ?></strong></p>
         </td>
-        <td class="tr0 td2">
-            <p class="p0 ft0">Age</p>
+        <td class="tr0 td0">
+            <p class="p5 ft0">Referred By</p>
         </td>
-        <td class="tr0 td3">
-            <p class="p2 ft0">
-                <?php
-                if(isset($model->patient->dob)) {
-                    echo date_diff(date_create($model->patient->dob), date_create('now'))->y;
-                }
-                ?>
-            </p>
+        <td class="tr0 td1">
+            <p class="p1 ft1"><strong><?= $model->referred_doctor;?></p>
         </td>
     </tr>
     <tr>
@@ -38,42 +32,34 @@
             </p>
         </td>
         <td class="tr0 td2">
-            <p class="p2 ft0">Visit No</p>
+            <p class="p2 ft0">Lab No: Y000751881</p>
         </td>
         <td colspan="2" class="tr0 td13">
             <p class="p2 ft0">
-                <nobr>V0000000126-YESH</nobr>
+                <nobr>Y000751881</nobr>
             </p>
         </td>
     </tr>
 
     <tr>
         <td class="tr0 td2">
-            <p class="p2 ft0">Collected On</p>
+            <p class="p0 ft0">Age</p>
         </td>
         <td class="tr0 td3">
-            <p class="p2 ft0">29/05/2016</p>
-        </td>
-        <td class="tr0 td5">
-            <p class="p2 ft0">Received On</p>
-        </td>
-        <td class="tr0 td6">
-            <p class="p2 ft0">29/05/2016 6:59AM</p>
-        </td>
-    </tr>
-
-    <tr>
-        <td class="tr0 td0">
-            <p class="p5 ft0">Referred By</p>
-        </td>
-        <td class="tr0 td1">
-            <p class="p1 ft1"><strong><?= $model->referred_doctor;?></p>
+            <p class="p2 ft0">
+                <?php
+                if(isset($model->patient->dob)) {
+                    echo date_diff(date_create($model->patient->dob), date_create('now'))->y;
+                }
+                ?>
+            </p>
         </td>
         <td class="tr0 td2">
             <p class="p2 ft0">Reported On</p>
         </td>
         <td class="tr0 td3">
-            <p class="p2 ft0">29/05/2016</p>
+            <p class="p2 ft0"><?= date_format(date_create($model->created_date),"d M Y, H:i")?></p>
         </td>
     </tr>
 </table>
+<br>

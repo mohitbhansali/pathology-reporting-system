@@ -43,10 +43,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-sm-6">
                 <div class="well">
                     <p>Referred Doctor: <strong><?= $model->referred_doctor;?></strong></p>
-                    <p>Konopnickiej 42</p>
-                    <p>43-190 Mikolow, Poland</p>
-                    <p>Email: lukasz@bootstrapmaster.com</p>
-                    <p>Phone: +48 123 456 789</p>
+                    <p>Reported On: <?= date_format(date_create($model->created_date),"d M Y, H:i")?></p>
+                    <p>Lab No: Y000751881</p>
                 </div>
             </div><!--/col-->
 

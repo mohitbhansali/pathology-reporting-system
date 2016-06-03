@@ -114,6 +114,14 @@ class Reports extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getPatientTests()
     {
         return $this->hasMany(PatientTests::className(), ['patient_report_fk_id' => 'id']);
