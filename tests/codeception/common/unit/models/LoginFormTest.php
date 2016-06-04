@@ -67,6 +67,7 @@ class LoginFormTest extends DbTestCase
 
     public function testLoginCorrect()
     {
+        ini_set('xdebug.max_nesting_level', 400);
         $model = new LoginForm([
             'email' => 'operator@pathologylabs.com',
             'password' => 'password_0',
