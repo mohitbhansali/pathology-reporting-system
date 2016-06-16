@@ -10,7 +10,7 @@ use yii\base\Component;
  */
 class Globals extends Component
 {
-    CONST VERSION 	    = '0.0.1';
+    CONST VERSION = '0.0.1';
 
     /**
      * Send Mail

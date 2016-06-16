@@ -2,6 +2,7 @@
 
 namespace tests\codeception\common\unit\models;
 
+use tests\codeception\common\fixtures\PatientFixture;
 use Yii;
 use tests\codeception\common\unit\DbTestCase;
 use tests\codeception\common\fixtures\UserFixture;
@@ -60,12 +61,27 @@ class PatientTest extends DbTestCase
         expect('pass code is empty, patient should not be created', $model->addPatient())->null();
     }
 
+    public function testDuplicatePassCode()
+    {
+        $model = new Patient([
+            'pass_code' => 'PC1234',
+            'gender' => 'm',
+            'dob' => '1991-02-11',
+        ]);
+
+        expect('pass code is duplicate, patient should not be created', $model->addPatient())->null();
+    }
+
     public function fixtures()
     {
         return [
             'patientUser' => [
                 'class' => UserFixture::className(),
                 'dataFile' => '@tests/codeception/common/unit/fixtures/data/models/patientUser.php',
+            ],
+            'patient' => [
+                'class' => PatientFixture::className(),
+                'dataFile' => '@tests/codeception/common/unit/fixtures/data/models/patient.php',
             ],
         ];
     }

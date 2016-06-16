@@ -9,7 +9,7 @@
 <div>
     Dear <?= isset($model->user)?$model->user->name:''; ?> <br><br/>
 
-    <p>Please use the following pass-code to view your report: </p>
+    <p>Please use the following pass-code to view your report: <?= $model->pass_code;?></p>
 </div>
 <!-- End of wrapper table -->
 </body>

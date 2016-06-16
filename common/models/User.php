@@ -114,6 +114,10 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByEmail($email)
     {
+        $location = Yii::$app->getBasePath();
+        if (strpos($location,'backend') !== false) {
+            return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE, 'is_deleted' => self::STATUS_DELETED, 'user_type' => 1]);
+        }
         return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE, 'is_deleted' => self::STATUS_DELETED]);
     }
 

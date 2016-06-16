@@ -42,12 +42,11 @@ class Patient extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_fk_id', 'pass_code', 'gender', 'dob'], 'required'],
+            [['pass_code', 'gender', 'dob'], 'required'],
             [['user_fk_id', 'created_by', 'modified_by'], 'integer'],
-            [['weight'], 'number'],
-            [['address'], 'string'],
+            [['address', 'weight'], 'string'],
             [['created_date', 'modified_date', 'dob'], 'safe'],
-            [['pass_code'], 'string', 'max' => 255],
+            [['pass_code', 'weight'], 'string', 'max' => 255],
             [['gender'], 'string', 'max' => 1],
             [['height'], 'string', 'max' => 100],
             [['blood_group'], 'string', 'max' => 10],
@@ -121,29 +120,32 @@ class Patient extends \yii\db\ActiveRecord
      */
     public function addPatient()
     {
-        if (!$this->validate()) {
+        if(!$this->validate()) {
             return null;
         }
 
         $model = new Patient();
 
         $model->user_fk_id = $this->user_fk_id;
+        $model->pass_code = $this->pass_code;
         $model->dob = $this->dob;
         $model->gender = $this->gender;
+        $model->height = $this->height;
+        $model->weight = $this->weight;
+        $model->blood_group = $this->blood_group;
+        $model->address = $this->address;
 
-        if($model->save()) {
-            if(isset($model->user->email)) {
-                $data = ['model' => $model];
-                $subject = "Pathology Labs Passcode";
-                $from = 'mohit.bhansali@housesome.com';
-                $to = $model->user->email;
-                $template = "passcode";
+        $model->save();
+        if(isset($model->user->email)) {
+            $data = ['model' => $model];
+            $subject = "Pathology Labs Passcode";
+            $from = 'mohit.bhansali@housesome.com'; //TODO
+            $to = $model->user->email;
+            $template = "passcode";
+            $toCS = "mohitbhansali11@gmail.com"; //TODO
 
-                Globals::sendMail($template, $data, $from,$to ,$subject, []);
-            }
-            return $model;
+            Globals::sendMail($template, $data, $from,$to ,$subject, [$toCS]);
         }
-
-        return null;
+        return isset($model)?$model:null;
     }
 }

@@ -1,13 +1,4 @@
 <br>
-<?php if(!empty($model->summary)): ?>
-    <div class="col-md-12 notice">
-        <h3>Summary</h3>
-        <div class="well">
-            <?= nl2br($model->summary)  ;?>
-        </div>
-    </div><!--/col-->
-<?php endif; ?>
-<br>
 <table cellspacing="0" cellpadding="0" style="width: 100%">
     <tr>
         <th width="10" align="left">

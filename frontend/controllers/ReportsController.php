@@ -15,6 +15,8 @@ use common\models\PatientTests;
 use common\models\PatientTestsSearch;
 use mPDF;
 use common\components\Globals;
+use yii\filters\AccessControl;
+use common\components\AccessRule;
 
 /**
  * ReportsController implements the CRUD actions for Reports model.
@@ -31,6 +33,30 @@ class ReportsController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => [
+                            Yii::$app->params['user.userTypeOperator'],
+                        ],
+                    ],
+                    [
+                        'actions' => ['index', 'view', 'download-report', 'mail-report'],
+                        'allow' => true,
+                        'roles' => [
+                            Yii::$app->params['user.userTypePatient'],
+                            Yii::$app->params['user.userTypeOperator'],
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -134,11 +160,21 @@ class ReportsController extends Controller
     {
         $model = $this->findModel($id);
 
+        // Get users for autocomplete
+        $users = User::find()
+            ->select(['user.name as value', 'patient_details.id as name' , 'patient_details.id as id'])
+            ->joinWith('patient')
+            ->where(['user.status'=>1,'user.is_deleted'=>0])
+            ->andWhere(['user.user_type' => 3])
+            ->asArray()
+            ->all();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'users' => $users
             ]);
         }
     }
@@ -175,8 +211,9 @@ class ReportsController extends Controller
     }
 
     /**
-     * @param $id
-     * Download Report as PDF
+     * @return \yii\web\Response
+     * @throws \MpdfException
+     * @throws \yii\base\ExitException
      */
     public function actionMailReport()
     {
@@ -208,14 +245,15 @@ class ReportsController extends Controller
             $mPDF1->Output($file_path, 'F');
 
             $data = ['model' => $model];
-            $subject = "Pathology Lab Report";
-            $from = 'mohit.bhansali@housesome.com';
-            //$toCS = Yii::$app->params['adminEmail'];
-            $to = Yii::$app->params['adminEmail'];
+            $name = isset($model->patient->user)?$model->patient->user->name:"";
+            $subject = "Pathology Lab Report - ".$name;
+            $from = 'mohit.bhansali@housesome.com'; //TODO
+            $toCS = Yii::$app->params['adminEmail'];
+            $to = isset($model->patient->user)?$model->patient->user->email:Yii::$app->params['adminEmail'];
             $template = "report";
 
             if(file_exists($file_path)) {
-                Globals::sendMailWithAttachment($template, $data, $from, $to, $subject, $file_path, []);
+                Globals::sendMailWithAttachment($template, $data, $from, $to, $subject, $file_path, [$toCS]);
             }
 
             if(Yii::$app->request->isAjax) {
@@ -237,7 +275,10 @@ class ReportsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        //$this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->is_deleted = 1;
+        $model->save();
 
         return $this->redirect(['index']);
     }

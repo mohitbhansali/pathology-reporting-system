@@ -3,7 +3,7 @@ $user = \common\models\User::find()->select('id')->where(['user_type' => 3])->or
 return [
     [
         'user_fk_id' => isset($user)?$user->id:0,
-        'pass_code' => mt_rand(100000, 999999),
+        'pass_code' => 'PC1234',
         'gender' => 'm',
         'dob' => '1991-02-11',
         'created_date' => '2016-06-02 18:08:32',

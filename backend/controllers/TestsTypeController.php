@@ -8,6 +8,8 @@ use common\models\TestsTypeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use common\components\AccessRule;
 
 /**
  * TestsTypeController implements the CRUD actions for TestsType model.
@@ -26,8 +28,26 @@ class TestsTypeController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['create', 'update', 'delete', 'index', 'view'],
+                        'allow' => true,
+                        'roles' => [
+                            Yii::$app->params['user.userTypeAdmin'],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
+	
+	public $enableCsrfValidation = false;
 
     /**
      * Lists all TestsType models.
@@ -101,9 +121,9 @@ class TestsTypeController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id);
-        $this->is_deleted = 1;
-        $this->save();
+        $model = $this->findModel($id);
+        $model->is_deleted = 1;
+        $model->save();
 
         return $this->redirect(['index']);
     }

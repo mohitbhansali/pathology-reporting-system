@@ -38,6 +38,7 @@ class ReportsTest extends DbTestCase
             'patient_fk_id' => $patient->id,
             'exam' => 'some_exam',
             'referred_doctor' => 'some_doctor_name',
+            'doctor_specialization' => 'doctor_specialization',
             'prescrption_text' => 'details_of_test',
         ]);
         $model->createReport();
@@ -53,6 +54,7 @@ class ReportsTest extends DbTestCase
         $model = new Reports([
             'exam' => '',
             'referred_doctor' => 'some_doctor_name',
+            'doctor_specialization' => 'doctor_specialization',
             'prescrption_text' => 'details_of_test',
         ]);
 

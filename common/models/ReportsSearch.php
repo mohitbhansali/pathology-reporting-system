@@ -19,7 +19,7 @@ class ReportsSearch extends Reports
     {
         return [
             [['id', 'patient_fk_id', 'status', 'is_deleted', 'created_by', 'modified_by'], 'integer'],
-            [['exam', 'referred_doctor', 'prescription_image', 'prescrption_text', 'summary', 'created_date', 'modified_date'], 'safe'],
+            [['exam', 'referred_doctor', 'doctor_specialization', 'prescription_image', 'prescrption_text', 'summary', 'created_date', 'modified_date'], 'safe'],
         ];
     }
 
@@ -62,7 +62,7 @@ class ReportsSearch extends Reports
             'id' => $this->id,
             'patient_fk_id' => $this->patient_fk_id,
             'status' => $this->status,
-            'is_deleted' => $this->is_deleted,
+            'is_deleted' => 0,
             'created_by' => $this->created_by,
             'created_date' => $this->created_date,
             'modified_by' => $this->modified_by,
@@ -71,6 +71,7 @@ class ReportsSearch extends Reports
 
         $query->andFilterWhere(['like', 'exam', $this->exam])
             ->andFilterWhere(['like', 'referred_doctor', $this->referred_doctor])
+            ->andFilterWhere(['like', 'doctor_specialization', $this->doctor_specialization])
             ->andFilterWhere(['like', 'prescription_image', $this->prescription_image])
             ->andFilterWhere(['like', 'prescrption_text', $this->prescrption_text])
             ->andFilterWhere(['like', 'summary', $this->summary]);
