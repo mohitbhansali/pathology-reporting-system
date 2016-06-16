@@ -4,7 +4,7 @@ return [
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=crossover',
+            'dsn' => 'mysql:host=localhost;dbname=pathology',
             'username' => 'root',
             'password' => '',
             'charset' => 'utf8',
